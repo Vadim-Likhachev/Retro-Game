@@ -1,3 +1,6 @@
+import themes from "./themes";
+import PositonedCharacter from "./PositionedCharacter";
+
 export default class GameController {
   constructor(gamePlay, stateService) {
     this.gamePlay = gamePlay;
@@ -5,8 +8,8 @@ export default class GameController {
   }
 
   init() {
-    // TODO: add event listeners to gamePlay events
-    // TODO: load saved stated from stateService
+    this.gamePlay.drawUi(themes.prairie);
+    this.gamePlay.redrawPositions();
   }
 
   onCellClick(index) {
