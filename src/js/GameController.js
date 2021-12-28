@@ -21,6 +21,8 @@ import {
 
 } from "./Computer";
 
+import GameStateServiced from "./GameStateService";
+
 import ControlBox from "./ControlBox";
 
 export default class GameController {
@@ -55,10 +57,10 @@ export default class GameController {
       this.levelUpgrade();
 
     } else {
-
+      this.currentLevel = 1;
       this.gamePlay.drawUi(themes.prairie);
       this.humanPlayer  = generateTeam(
-        new Team().typesForHuman,
+        [new Team().typesForHuman[0], new Team().typesForHuman[1]],
         1,
         2,
         [],
@@ -366,22 +368,22 @@ export default class GameController {
 
   nextLevel(arr) {
     console.log(this.humanPosition, "this.humanPosition");
-    this.humanPosition.forEach((elem) => elem.character.levelUp()); 
     this.survivor = []; 
     this.humanPosition.forEach((elem) =>
       this.survivor.push(elem.character)
     );
 
+
+   this.survivor.forEach(elem => {
+     elem.levelUp();
+   })
+
     this.currentLevel += 1;
 
     if (this.currentLevel === 2) {
-      this.humanNewTeam = generateTeam(
-        new Team().typesForHuman,
-        2,
-        1,
-        this.survivor,
-        this.gamePlay.boardSize
-      );
+      let newPers = [];
+      newPers.push(new Team().typesForHuman[this.random(0,2)]);
+      this.humanNewTeam = [...this.survivor, ...newPers];
       this.compNewTeam = generateTeam(
         new Team().typesForComputer,
         this.random(1, 2),
@@ -390,43 +392,43 @@ export default class GameController {
       );
     }
 
-    if (this.currentLevel === 3) {
-      this.humanNewTeam= generateTeam(
-        new Team().typesForHuman,
-        this.random(1, 2),
-        2,
-        this.survivor,
-        this.gamePlay.boardSize
-      );
-      this.compNewTeam = generateTeam(
-        new Team().typesForComputer,
-        this.random(1, 3),
-        this.humanNewTeam.length,
-        this.gamePlay.boardSize
-      );
-    }
+    // if (this.currentLevel === 3) {
+    //   this.humanNewTeam= generateTeam(
+    //     new Team().typesForHuman,
+    //     this.random(1, 2),
+    //     2,
+    //     this.survivor,
+    //     this.gamePlay.boardSize
+    //   );
+    //   this.compNewTeam = generateTeam(
+    //     new Team().typesForComputer,
+    //     this.random(1, 3),
+    //     this.humanNewTeam.length,
+    //     this.gamePlay.boardSize
+    //   );
+    // }
 
-    if (this.currentLevel === 4) {
-      this.humanNewTeam = generateTeam(
-        new Team().typesForHuman,
-        this.random(1, 3),
-        2,
-        this.survivor,
-        this.gamePlay.boardSize
-      );
-      this.compNewTeam = generateTeam(
-        new Team().typesForComputer,
-        this.random(1, 4),
-        this.humanNewTeam.length,
-        this.gamePlay.boardSize
-      );
-    }
+    // if (this.currentLevel === 4) {
+    //   this.humanNewTeam = generateTeam(
+    //     new Team().typesForHuman,
+    //     this.random(1, 3),
+    //     2,
+    //     this.survivor,
+    //     this.gamePlay.boardSize
+    //   );
+    //   this.compNewTeam = generateTeam(
+    //     new Team().typesForComputer,
+    //     this.random(1, 4),
+    //     this.humanNewTeam.length,
+    //     this.gamePlay.boardSize
+    //   );
+    // }
 
-    if (this.currentLevel > 4) {
-      this.currentLevel === 4;
-      this.gameOver(this.humanPosition, this.computerPosition);
-      return;
-    }
+    // if (this.currentLevel > 4) {
+    //   this.currentLevel === 4;
+    //   this.gameOver(this.humanPosition, this.computerPosition);
+    //   return;
+    // }
 
     this.generateTeamsPosition(this.humanNewTeam, this.compNewTeam);
     this.players = [...this.humanPosition, ...this.computerPosition]; 
@@ -503,8 +505,8 @@ export default class GameController {
       this.currentLevel = this.saveGame.level;
       this.scores = this.saveGame.scores;
       this.record = this.saveGame.record;
-      this.players = [];
-      this.fieldUpdate();
+      this.players = [...this.saveGame.human, ...this.saveGame.computer];
+      this.gamePlay.redrawPositions(this.players);
       console.log(this.currentLevel, "this.currentLevel");
     } else {
       GamePlay.showMessage("No saved games!");

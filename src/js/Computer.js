@@ -92,7 +92,7 @@ export function calcMovingCells(targetPers) {
     let newPosition = item[0];
 
     if (!Y && X < 0) {
-      movingCells.puch(item[0], item[0] + 1);
+      movingCells.push(item[0], item[0] + 1);
     }
     if (Y > 0 && !X) {
       movingCells.push(item[0], item[0] - 8);
